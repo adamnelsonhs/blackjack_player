@@ -1,0 +1,79 @@
+import random
+suit = ['diamond','heart','spade','club']
+rank = [1,2,3,4,5,6,7,8,9,10,'jack','queen','king','ace']
+
+deck = []
+for i in suit:
+    for j in rank:
+        deck.append([j,i])
+        
+def shuffle(d):
+    random.shuffle(d)
+    return(d)
+
+def count(hands, i):
+    values = []
+    for j in range(len(hands[i])):
+        values.append(hands[i][j][0])
+    return sum(values)
+
+def deal(d,players):
+    shuffle(d)
+    hands = {i:[] for i in range(players)}
+    for i in range(players):
+        hit(hands[i])
+    for i in range(players):
+        hit(hands[i])
+    return hands
+
+def face_card_convert(deal,players):
+    for i in range(players):
+        if deal[i][0][0] == 'jack':
+            deal[i][0][0] = 10
+        if deal[i][0][0] == 'queen':
+            deal[i][0][0] = 10
+        if deal[i][0][0] == 'king':
+            deal[i][0][0] = 10
+        if deal[i][0][0] == 'ace':
+            deal[i][0][0] = 11
+    for i in range(players):
+        if deal[i][1][0] == 'jack':
+            deal[i][1][0] = 10
+        if deal[i][1][0] == 'queen':
+            deal[i][1][0] = 10
+        if deal[i][1][0] == 'king':
+            deal[i][1][0] = 10
+        if deal[i][1][0] == 'ace':
+            deal[i][1][0] = 11
+            
+def hit(hand):
+    hand.append(deck[0])
+    deck.append(deck.pop(0))
+    
+def play_round(deck, players):
+    hands = deal(deck, players)
+    face_card_convert(hands, players)        
+    scores = {i: [count(hands, i)]  for i in range(5)}
+    if scores[0][0] > 16:
+        if scores[0][0] > 21:
+            print('Dealer busts!')
+        elif scores[0][0] == 21:
+            print('Dealer wins!')
+        else:
+            print('Dealer has' + str(scores[0][0]))
+    while scores[0][0] <= 16:
+        hit(hands[0])
+        scores = {i: [count(hands, i)]  for i in range(5)}
+        if scores[0][0] > 21:
+            print('Dealer busts!')
+        elif scores[0][0] == 21:
+            print('Dealer wins!')
+        else:
+            print('Dealer has' + str(scores[0][0]))
+    for i in range(1,players):
+        if scores[i][0] > 21:
+            print('player ' + str(i) + ' has ' + str(scores[i]) +', you bust!')
+        if scores[i][0] == 21:
+            print('Winner, winner chicken Dinner for player ' + str(i) + '!!!' 'has ' + str(scores[i]))
+        else:
+            print('player ' + str(i) + ' has ' + str(scores[i])+ ', want a hit or stay?')        
